@@ -1,7 +1,7 @@
 # Variáveis de compilação
 CC = g++
-CFLAGS = -Wall -Wextra -pedantic -std=c++11
-LDFLAGS = -lSDL2
+CFLAGS = -Wall -Wextra -Werror -std=c++20 -pedantic
+LDFLAGS = -lSDL2 -lGL
 
 # Diretórios
 SRC_DIR = src
