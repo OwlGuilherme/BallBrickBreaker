@@ -1,67 +1,83 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_opengl.h>
 #include <iostream>
 
-int main() {
-
-  if (SDL_Init(SDL_INIT_VIDEO) < 0 ) {
-    std::cerr << "Erro ao inicilizar o SDL: " << SDL_GetError() << '\n';
-    return -1;
+int main()
+{
+  // Verificação de erros
+  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
+      std::cerr << "Erro ao inicializar SDL: " << SDL_GetError() << '\n';
+      return -1;
   }
 
-  SDL_Window* window = SDL_CreateWindow("BallBrickBreacker", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-  if (window == nullptr) {
-    std::cerr << "Erro ao criar a janela: " << SDL_GetError() << '\n';
-    SDL_Quit();
-    return -1;
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  SDL_Window* window = SDL_CreateWindow("BallBrickBreaker",
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      SDL_WINDOWPOS_UNDEFINED,
+                                      600, 400,
+                                      SDL_WINDOW_OPENGL);
+
+  if (window == nullptr)
+  {
+      std::cerr << "Erro ao criar janela: " << SDL_GetError() << '\n';
+      SDL_Quit();
+      return -1;
   }
 
-  // Cria render
-  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  if (renderer == nullptr) {
-    std::cerr << "Erro ao criar o renderer: " << SDL_GetError() << '\n';
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return -1;
+  SDL_GLContext context = SDL_GL_CreateContext(window);
+  if (context == nullptr)
+  {
+      std::cerr << "Erro ao criar contexto OpenGL: " << SDL_GetError() << '\n';
+      SDL_DestroyWindow(window);
+      SDL_Quit();
+      return -1;
   }
 
-  // Define cor do retângulo (vermelho)
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  glClearColor(0, 0, 0, 0);
 
-  // Define coordenadas e dimensões do retângulo
-  SDL_Rect rect;
-  rect.x = 400 - 25;
-  rect.y = 100;
-  rect.w = 50;
-  rect.h = 400;
+  // Área exibida
+  glViewport(0, 0, 600, 400);
+  glShadeModel(GL_SMOOTH);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
 
-  SDL_RenderClear(renderer);
+  glDisable(GL_DEPTH_TEST);
 
-  SDL_RenderFillRect(renderer, &rect);
-
-  SDL_RenderPresent(renderer);
-
-  bool quit = false;
+  auto running = true;
   SDL_Event event;
-  while (!quit) {
-    while (SDL_PollEvent(&event) != 0) {
-      if (event.type == SDL_QUIT) {
-        quit = true;
+  while (running)
+  {
+    while (SDL_PollEvent(&event) != 0)
+    {
+      if (event.type == SDL_QUIT)
+      {
+        running = false;
       }
     }
+    glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer
+    SDL_GL_SwapWindow(window); // Troca os buffers para exibir a janela
   }
 
-  SDL_DestroyRenderer(renderer);
+  // Lógica
+
+
+  // Renderização
+
+
+  SDL_GL_DeleteContext(context);
   SDL_DestroyWindow(window);
   SDL_Quit();
 
   return 0;
-
 }
-
-
 
