@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_opengl.h>
 #include <iostream>
 
@@ -12,6 +13,10 @@ int main()
       std::cerr << "Erro ao inicializar SDL: " << SDL_GetError() << '\n';
       return -1;
   }
+  
+  // Define o tamanho de x e de y em variáveis
+  auto x_size = 600;
+  auto y_size = 400;
 
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -24,7 +29,7 @@ int main()
   SDL_Window* window = SDL_CreateWindow("BallBrickBreaker",
                                       SDL_WINDOWPOS_UNDEFINED,
                                       SDL_WINDOWPOS_UNDEFINED,
-                                      600, 400,
+                                      x_size, y_size,
                                       SDL_WINDOW_OPENGL);
 
   if (window == nullptr)
@@ -43,10 +48,10 @@ int main()
       return -1;
   }
 
-  glClearColor(0, 0, 0, 0);
+  glClearColor(1, 1, 1, 1);
 
   // Área exibida
-  glViewport(0, 0, 600, 400);
+  glViewport(0, 0, x_size, y_size);
   glShadeModel(GL_SMOOTH);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -55,6 +60,22 @@ int main()
 
   auto running = true;
   SDL_Event event;
+
+  auto person_x = 300;
+  auto person_y = 350;
+  auto person_comp = 50;
+  auto person_alt = 30;
+
+  auto esq = false;
+  auto dir = false;
+
+  // Configura quadradinho andando na tela
+  auto square_x = 50;
+  auto square_y = 50;
+  auto squareCA = 30;
+  auto vel_square_x = 2;
+  auto vel_square_y = 2;
+
   while (running)
   {
     while (SDL_PollEvent(&event) != 0)
@@ -63,17 +84,101 @@ int main()
       {
         running = false;
       }
+      // Verificação de teclas esquerda e direita pressionada
+      if (event.type == SDL_KEYDOWN)
+      {
+        if (event.key.keysym.sym == SDLK_LEFT)
+        {
+          esq = true;
+        }
+        else if (event.key.keysym.sym == SDLK_RIGHT)
+        {
+          dir = true;
+        }
+      }
+      else if (event.type == SDL_KEYUP)
+      {
+        if (event.key.keysym.sym == SDLK_LEFT)
+        {
+          esq = false;
+        }
+        else if (event.key.keysym.sym == SDLK_RIGHT)
+        {
+          dir = false;
+        }
+      }
     }
+
+    // Lógica
+    // Movimentos
+    auto vel = 8;
+    if (esq == true)
+    {
+      if (person_x >= 0)
+      {
+        person_x -= vel;
+      }      
+    }
+    if (dir == true)
+    {
+      if (person_x + person_comp <= x_size)
+      {
+        person_x += vel;
+      }
+    }
+
+    // Movimentação do quadrado
+    square_x += vel_square_x;
+    square_y += vel_square_y;
+
+    if (square_x <= 0)
+    {
+      vel_square_x = -vel_square_x;
+    }
+    else if (square_x + squareCA >= x_size)
+    {
+      vel_square_x = -vel_square_x;
+    }
+    else if (square_y <= 0)
+    {
+      vel_square_y = -vel_square_y;
+    }
+    else if (square_y + squareCA >= y_size)
+    {
+      vel_square_y = -vel_square_y;  
+    }
+
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer
+
+    glPushMatrix(); // Inicialização da matriz
+
+    glOrtho(0, x_size, y_size, 0, -1, 1); // Domensões da matriz
+    glColor4ub(255, 0, 0, 255);
+
+    // Definições do quadrado inferior
+    glBegin(GL_QUADS);
+    glVertex2f(person_x, person_y);
+    glVertex2f(person_x + person_comp, person_y);
+    glColor4ub(200, 125, 55, 230);
+    glVertex2f(person_x + person_comp, person_y + person_alt);
+    glVertex2f(person_x, person_y + person_alt);
+    glEnd();
+
+    // Definições do quadradinho
+    glBegin(GL_QUADS);
+    glColor4ub(125, 200, 50, 200);
+    glVertex2f(square_x, square_y);
+    glVertex2f(square_x + squareCA, square_y);
+    glVertex2f(square_x + squareCA, square_y + squareCA);
+    glVertex2f(square_x, square_y + squareCA);
+    glEnd();
+
+    glPopMatrix(); // Encerramento da matrix
+
     SDL_GL_SwapWindow(window); // Troca os buffers para exibir a janela
   }
 
-  // Lógica
-
-
   // Renderização
-
-
   SDL_GL_DeleteContext(context);
   SDL_DestroyWindow(window);
   SDL_Quit();
