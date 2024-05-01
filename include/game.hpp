@@ -22,4 +22,6 @@ void drawCircles (const std::vector<Circle>& circles, int segments);
 
 void uptadeCirclePos(Circle& circle);
 
+void checkCollision(Circle& circle, int screenWidth, int screenHeight, Person& person);
+
 #endif
