@@ -73,8 +73,8 @@ int main()
   auto square_x = 50;
   auto square_y = 50;
   auto squareCA = 30;
-  auto vel_square_x = 2;
-  auto vel_square_y = 2;
+  auto vel_square_x = 4;
+  auto vel_square_y = 4;
 
   while (running)
   {
