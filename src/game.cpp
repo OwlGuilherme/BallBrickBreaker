@@ -20,3 +20,8 @@ void drawCircles(const std::vector<Circle>& circles, int segments) {
     glEnd();
   }
 }
+
+void uptadeCirclePos(Circle &circle) {
+  circle.x += circle.velocityX;
+  circle.y += circle.velocityY;
+}
