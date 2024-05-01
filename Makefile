@@ -17,12 +17,15 @@ EXEC = $(BIN_DIR)/main
 $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 # Regra de limpeza
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -rf $(BUILD_DIR) $(EXEC)
 
 .PHONY: clean
 
