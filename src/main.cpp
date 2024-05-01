@@ -69,13 +69,6 @@ int main()
   auto esq = false;
   auto dir = false;
 
-  // Configura quadradinho andando na tela
-  auto square_x = 50;
-  auto square_y = 50;
-  auto squareCA = 30;
-  auto vel_square_x = 4;
-  auto vel_square_y = 4;
-
   while (running)
   {
     while (SDL_PollEvent(&event) != 0)
@@ -126,28 +119,6 @@ int main()
         person_x += vel;
       }
     }
-
-    // Movimentação do quadrado
-    square_x += vel_square_x;
-    square_y += vel_square_y;
-
-    if (square_x <= 0)
-    {
-      vel_square_x = -vel_square_x;
-    }
-    else if (square_x + squareCA >= x_size)
-    {
-      vel_square_x = -vel_square_x;
-    }
-    else if (square_y <= 0)
-    {
-      vel_square_y = -vel_square_y;
-    }
-    else if (square_y + squareCA >= y_size)
-    {
-      vel_square_y = -vel_square_y;  
-    }
-
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer
 
     glPushMatrix(); // Inicialização da matriz
@@ -162,15 +133,6 @@ int main()
     glColor4ub(200, 125, 55, 230);
     glVertex2f(person_x + person_comp, person_y + person_alt);
     glVertex2f(person_x, person_y + person_alt);
-    glEnd();
-
-    // Definições do quadradinho
-    glBegin(GL_QUADS);
-    glColor4ub(125, 200, 50, 200);
-    glVertex2f(square_x, square_y);
-    glVertex2f(square_x + squareCA, square_y);
-    glVertex2f(square_x + squareCA, square_y + squareCA);
-    glVertex2f(square_x, square_y + squareCA);
     glEnd();
 
     glPopMatrix(); // Encerramento da matrix
