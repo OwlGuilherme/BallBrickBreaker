@@ -76,10 +76,10 @@ int main()
   SDL_Event event;
 
   Person person;
+  person.x = 300;
+  person.y = 350;
   person.width = 50;
   person.height = 30;
-  person.x = 300;
-  person.y = y_size - person.height;
 
 
   b2BodyDef personBodyDef;
@@ -226,7 +226,7 @@ int main()
     Circle circle1;
     circle1.x = 300;
     circle1.y = 200;
-    circle1.radius = 10;
+    circle1.radius = 15;
     circles.push_back(circle1);
 
     drawCircles(circles, 10);
